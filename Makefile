@@ -1,3 +1,12 @@
+lint:
+	@echo
+	poetry run ruff .
+	@echo
+	poetry run blue --check --diff --color .
+	@echo
+	poetry run mypy .
+	@echo
+	poetry run pip-audit
 
 run_kafka:
 	docker-compose -f ./database/kafka_broker/docker-compose.yml up --build -d

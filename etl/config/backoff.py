@@ -71,7 +71,7 @@ def backoff_log(
     )
 
 
-F_type = TypeVar("F_type", bound=Callable[..., Any])
+F_type = TypeVar('F_type', bound=Callable[..., Any])
 
 
 def backoff_function(
@@ -80,8 +80,8 @@ def backoff_function(
     factor: float = 2,
     border_sleep_time: float = 10,
 ) -> Callable[[F_type], F_type]:
-    """Decorator to run function again if an exception was raised. Waits between runs
-        in according to `exponential_backoff_timings`.
+    """Decorator to run function again if an exception was raised.
+    Waits between runs in according to `exponential_backoff_timings`.
 
     Args:
         exceptions (Union[str, Type[Exception], tuple[Type[Exception], ...]]):

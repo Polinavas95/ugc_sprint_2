@@ -2,7 +2,8 @@ from kafka import KafkaConsumer  # type: ignore
 from abc import ABC, abstractmethod
 from loguru import logger
 import time
-from typing import Any, Generator
+from typing import Any
+from collections.abc import Generator
 
 
 class UserMovieConsumer(ABC):
@@ -25,9 +26,8 @@ class KafkaUserMovieConsumer(UserMovieConsumer):
                 )
                 break
             except Exception as e:
-                logger.exception("Failed to connect to Kafka: {}", e)
-                logger.info("Retrying in 5 seconds...")
+                logger.exception('Failed to connect to Kafka: {}', e)
+                logger.info('Retrying in 5 seconds...')
                 time.sleep(5)
 
-        for message in consumer:
-            yield message
+        yield from consumer

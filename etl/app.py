@@ -26,7 +26,9 @@ def connect_kafka() -> KafkaConsumer:
 
 
 def run(
-    kafka_consumer: KafkaConsumer, driver: ETLClickhouseDriver, batch_size: int = 100
+    kafka_consumer: KafkaConsumer,
+    driver: ETLClickhouseDriver,
+    batch_size: int = 100,
 ) -> None:
     batches_backup: list[tuple[str, dict[str, Any]]] = []
     batches: list[tuple[str, dict[str, Any]]] = []
@@ -38,40 +40,43 @@ def run(
             flush_start = time.time()
             while len(batches) < batch_size:
                 for msg in kafka_consumer:
-                    logger.info("Got message from Kafka")
+                    logger.info('Got message from Kafka')
                     value = json.loads(msg.value)
                     batches.append(transform(value))
                     # Если длина партии < 1000 или прошло больше 29 секунд
-                    if len(batches) >= 1000 or (time.time() - flush_start) > 29:
+                    if (
+                        len(batches) >= 1000
+                        or (time.time() - flush_start) > 29
+                    ):
                         # Попытка загрузки в ClickHouse
-                        logger.info("Uploading batch to clickhouse...")
+                        logger.info('Uploading batch to clickhouse...')
                         result = driver.ch_load(order_batches(batches))
                         if not result:
                             continue
                         # Отдельная фиксация каждого смещения
                         else:
                             kafka_consumer.commit()
-                            logger.info("Batch uploaded to clickhouse")
+                            logger.info('Batch uploaded to clickhouse')
 
                         batches = []
                         flush_start = time.time()
 
         except KafkaError as kafka_error:
-            logger.error("Got Kafka error: {0}".format(kafka_error))
+            logger.error(f'Got Kafka error: {kafka_error}')
 
         except Error as ch_error:
-            logger.error("Got ClickHouse error: {0}".format(ch_error))
+            logger.error(f'Got ClickHouse error: {ch_error}')
         finally:
             batches_backup = batches
-            logger.info("Stop to transport data")
+            logger.info('Stop to transport data')
 
 
-if __name__ == "__main__":
-    logger.info("Start to transport data")
-    logger.info("Connect to Kafka")
+if __name__ == '__main__':
+    logger.info('Start to transport data')
+    logger.info('Connect to Kafka')
     consumer = connect_kafka()
-    logger.info("Connect to ClickHouse")
+    logger.info('Connect to ClickHouse')
     ch_driver = connect_ch()
-    logger.info("Databases start to work")
+    logger.info('Databases start to work')
     run(consumer, ch_driver, batch_size=settings.app.batch_size)
-    logger.info("Finished loading")
+    logger.info('Finished loading')

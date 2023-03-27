@@ -5,7 +5,13 @@ from config.backoff import backoff_function
 
 
 class ETLKafkaConsumer:
-    def __init__(self, host: list[str], topics: list[str], group_id: str, auto_commit: bool):
+    def __init__(
+        self,
+        host: list[str],
+        topics: list[str],
+        group_id: str,
+        auto_commit: bool,
+    ):
         self.host = host
         self.topics = topics
         self.group_id = group_id

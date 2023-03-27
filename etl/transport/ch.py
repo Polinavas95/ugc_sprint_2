@@ -20,7 +20,7 @@ class ETLClickhouseDriver:
 
     def ch_database_init(self) -> None:
         self.client.execute(
-            f"CREATE DATABASE IF NOT EXISTS {self.db} ON CLUSTER company_cluster"
+            f'CREATE DATABASE IF NOT EXISTS {self.db} ON CLUSTER company_cluster'
         )
         for table in self.tables:
             self.client.execute(
@@ -36,11 +36,11 @@ class ETLClickhouseDriver:
         for event_type, batch in data.items():
             try:
                 self.client.execute(
-                    f"INSERT INTO {self.db}.{event_type} VALUES",
+                    f'INSERT INTO {self.db}.{event_type} VALUES',
                     batch,
                     types_check=True,
                 )
             except KeyError as ch_err:
-                logging.exception(msg="KeyError", exc_info=ch_err)
+                logging.exception(msg='KeyError', exc_info=ch_err)
 
         return True

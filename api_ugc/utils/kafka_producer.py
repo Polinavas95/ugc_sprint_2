@@ -5,7 +5,7 @@ from random import choice
 from uuid import uuid4
 
 from fastapi import Security
-from kafka import KafkaProducer  # type: ignore
+from kafka import KafkaProducer
 from loguru import logger
 
 from models.event import EventForUGS, orjson_dumps, EventView
@@ -30,34 +30,36 @@ class KafkaUserMovieProducer(UserMovieProducer):
                 )
                 break
             except Exception as e:
-                logger.exception("Failed to connect to Kafka: {}", e)
-                logger.info("Retrying in 5 seconds...")
+                logger.exception('Failed to connect to Kafka: {}', e)
+                logger.info('Retrying in 5 seconds...')
                 time.sleep(5)
 
     def send_generated_event(self) -> EventForUGS:
         event_raw = self.generate_event(
             event=self.generate_event_type(),
             viewed_frame=int(datetime.now().timestamp()),
-            ip="123.123.123.123",
+            ip='123.123.123.123',
         )
         event = event_raw.dict()
-        user_id = event["event_view"]["user_id"]
-        movie_id = event["event_view"]["movie_id"]
+        user_id = event['event_view']['user_id']
+        movie_id = event['event_view']['movie_id']
         event_string = orjson_dumps(event, default={})
 
         logger.info(
-            "Sending message to Kafka. Topic: {}, Value: {}", self.topic, event_string
+            'Sending message to Kafka. Topic: {}, Value: {}',
+            self.topic,
+            event_string,
         )
         self.producer.send(
             topic=self.topic,
             value=event_string.encode(),
-            key=f"{user_id}+{movie_id}".encode(),
+            key=f'{user_id}+{movie_id}'.encode(),
         )
-        logger.info("Message sent to Kafka")
+        logger.info('Message sent to Kafka')
         return event_raw
 
     def generate_event_type(self) -> str:
-        return choice(["opened", "closed", "paused", "resumed"])
+        return choice(['opened', 'closed', 'paused', 'resumed'])
 
     def generate_event(
         self,
@@ -72,9 +74,9 @@ class KafkaUserMovieProducer(UserMovieProducer):
                 event=event,
                 viewed_frame=viewed_frame,
                 date=datetime.now(),
-                timezone="UTC",
+                timezone='UTC',
             ),
             ip=ip,
-            event_type="movie_watch_history",
-            timezone="UTC",
+            event_type='movie_watch_history',
+            timezone='UTC',
         )

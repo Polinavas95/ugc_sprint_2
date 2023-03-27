@@ -7,7 +7,9 @@ import orjson
 from pydantic import BaseModel
 
 
-def orjson_dumps(v: Any, *, default: Callable[[Any], Any] | None | dict) -> str:
+def orjson_dumps(
+    v: Any, *, default: Callable[[Any], Any] | None | dict
+) -> str:
     return orjson.dumps(v, default=default).decode()
 
 
@@ -26,8 +28,8 @@ class EventView(ConfigMixin):
 
     def dict(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
         result: dict[str, Any] = super().dict(*args, **kwargs)
-        result["movie_id"] = str(result["movie_id"])
-        result["user_id"] = str(result["user_id"])
+        result['movie_id'] = str(result['movie_id'])
+        result['user_id'] = str(result['user_id'])
         return result
 
 

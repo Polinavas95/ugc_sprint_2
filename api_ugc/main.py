@@ -1,5 +1,5 @@
 from config.config import get_settings
-from utils.kafka_producer import KafkaUserMovieProducer  # type: ignore
+from utils.kafka_producer import KafkaUserMovieProducer
 from fastapi import FastAPI
 
 settings = get_settings()

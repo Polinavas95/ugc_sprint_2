@@ -18,19 +18,85 @@ uvicorn = {extras = ["standard"], version = "^0.21.1"}
 clickhouse-driver = "^0.2.5"
 orjson = "^3.8.8"
 python-jose = "3.2.0"
+ruff = "0.0.252"
+blue = "0.9.1"
+mypy = "1.0.1"
+pytest = "^7.2.2"
 
 
 [tool.poetry.group.dev.dependencies]
-mypy = "^1.1.1"
-black = "^23.1.0"
-ruff = "^0.0.257"
 ipykernel = "^6.21.3"
+blue = "*"
+mypy = "*"
+pip-audit = "*"
+pytest = "*"
+pytest-cov = "*"
+ruff = "*"
+pre-commit = "*"
+djlint = "^1.19.14"
+
+[tool.blue]
+line-length = 79
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.mypy]
+ignore_missing_imports = true
+disallow_untyped_defs = true
+strict = true
+implicit_reexport = true
+exclude = [
+    "auth_service/src/db/datastore.py",
+    "auth_service/src/core/config.py",
+    "auth_service/src/db/postgres.py",
+    "auth_service/main.py",
+    "venv",
+    "postgres_data",
+    "redis_data",
+    "tests",
+    "database/kafka_broker",
+    "etl/models/models.py",
+    "api_ugc/api",
+    "etl"
+]
 
 [tool.ruff]
+line-length = 79
+select = [
+    "A",
+    "ARG",
+    "B",
+    "C",
+    "C4",
+    "E",
+    "ERA",
+    "F",
+    "I",
+    "N",
+    "PLC",
+    "PLE",
+    "PLR",
+    "PLW",
+    "RET",
+    "S",
+    "T10",
+    "T10",
+    "UP",
+    "W",
+]
+ignore = ["A003", "I001", "PLR2004", "PLE1205", "RET507", "B008"]
 exclude = [
     "database/clickhouse/init_database.py",
-    "etl/transport/ch.py"
+    "etl/transport/ch.py",
+    "auth_service/main.py"
 ]
+target-version = "py310"
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/**" = ["ARG", "S", "RET504", "PLR2004"]
+"auth_service/src/utils/template_utils.py" = ["E501"]
 
 [build-system]
 requires = ["poetry-core"]
