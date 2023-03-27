@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "ugc_sprint_1"
+version = "0.1.0"
+description = "Service that stores user generated content"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [
+    {include = "api_ugc"},
+    {include = "storage_ugc"}
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+kafka-python = "^2.0.2"
+loguru = "^0.6.0"
+fastapi = "^0.94.1"
+uvicorn = {extras = ["standard"], version = "^0.21.1"}
+clickhouse-driver = "^0.2.5"
+orjson = "^3.8.8"
+python-jose = "3.2.0"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.1.1"
+black = "^23.1.0"
+ruff = "^0.0.257"
+ipykernel = "^6.21.3"
+
+[tool.ruff]
+exclude = [
+    "database/clickhouse/init_database.py",
+    "etl/transport/ch.py"
+]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  ugc_etl:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ugc_etl
+    command: >
+      python app.py
+    volumes:
+      - ./etl:/code
+    env_file:
+      - .env_etl
+    networks:
+      - default
+
+networks: 
+  default: 
+    external: 
+      name: network

@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  api_ugc:
+    container_name: api_ugc
+    image: api-ugc
+    build:
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/code
+    ports:
+      - '8000:8000'
+    env_file:
+      - .env_ugc
+    restart: always
+    networks:
+      - default
+
+  nginx_ugc:
+    build: nginx
+    container_name: nginx_ugc
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/configs/site.conf:/etc/nginx/conf.d/site.conf:ro
+      - ./nginx/data:/data/
+    depends_on:
+      - api_ugc
+    ports:
+      - '80:80'
+    networks:
+      - default
+
+networks: 
+  default: 
+    external: 
+      name: network
