@@ -24,10 +24,6 @@ class Settings(BaseSettings):
     COLLECTION_REVIEW = 'reviews'
     COLLECTION_BOOKMARK = 'bookmarks'
 
-    MONGO_COLLECTION_LIKE = 'like_dislike'
-    MONGO_COLLECTION_REVIEW = 'reviews'
-    MONGO_COLLECTION_BOOKMARK = 'bookmarks'
-
     ITERATIONS_NUMBER = 10
     USERS_IN_BATCH = 10
     OPTIMAL_BATCH_SIZE = 200

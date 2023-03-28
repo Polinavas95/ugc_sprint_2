@@ -29,7 +29,7 @@ def init_clickhouse(
     )
 
 
-def test_insert_step(
+def ch_insert_step(
         faker: Callable,
         collection_name: str,
         batch_size: int,
@@ -55,14 +55,14 @@ def test_insert_step(
     )
 
 
-def test_insert(faker: Callable, collection_name: str) -> None:
+def ch_insert(faker: Callable, collection_name: str) -> None:
     """Тестирование вставки с разным размером батча."""
     batch_sizes = [1, 10, 50, 100, 200, 500, 1000, 2000, 5000]
     for batch_size in batch_sizes:
-        test_insert_step(faker, collection_name, batch_size)
+        ch_insert_step(faker, collection_name, batch_size)
 
 
-def test_read_data(faker: Callable, collection_name: str, users_size: int) -> None:
+def ch_read_data(faker: Callable, collection_name: str, users_size: int) -> None:
     """Тестирование чтения."""
     statistics = []
     users = [str(uuid4()) for _ in range(users_size)]
@@ -106,10 +106,10 @@ if __name__ == '__main__':
         'datetime': 'DateTime',
     }, table=settings.COLLECTION_BOOKMARK)
 
-    test_insert(fake_like_event, settings.COLLECTION_LIKE)
-    test_insert(fake_review_event, settings.COLLECTION_REVIEW)
-    test_insert(fake_bookmark_event, settings.COLLECTION_BOOKMARK)
+    ch_insert(fake_like_event, settings.COLLECTION_LIKE)
+    ch_insert(fake_review_event, settings.COLLECTION_REVIEW)
+    ch_insert(fake_bookmark_event, settings.COLLECTION_BOOKMARK)
 
-    test_read_data(fake_like_event, settings.COLLECTION_LIKE, 20)
-    test_read_data(fake_review_event, settings.COLLECTION_REVIEW, 20)
-    test_read_data(fake_bookmark_event, settings.COLLECTION_BOOKMARK, 20)
+    ch_read_data(fake_like_event, settings.COLLECTION_LIKE, 20)
+    ch_read_data(fake_review_event, settings.COLLECTION_REVIEW, 20)
+    ch_read_data(fake_bookmark_event, settings.COLLECTION_BOOKMARK, 20)

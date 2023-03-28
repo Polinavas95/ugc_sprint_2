@@ -4,7 +4,7 @@ from typing import Any, Optional
 import backoff
 from clickhouse_driver import Client, errors
 
-from config import Settings
+from research.config import Settings
 
 settings = Settings()
 

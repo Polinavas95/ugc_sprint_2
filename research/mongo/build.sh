@@ -16,10 +16,10 @@ docker exec -it mongors1n1 bash -c 'echo "use ugc_db" | mongosh'
 # Включение шардирования в БД
 docker exec -it mongos1 bash -c 'echo "sh.enableSharding(\"ugc_db\")" | mongosh'
 
-# Создание тестовой коллекции like_dislike в БД ugc_db
-docker exec -it mongos1 bash -c 'echo "db.createCollection(\"ugc_db.like_dislike\")" | mongosh'
-# Настройка шардирования для коллекции like_dislike
-docker exec -it mongos1 bash -c 'echo "sh.shardCollection(\"ugc_db.like_dislike\", {\"film_id\": \"hashed\"})" | mongosh'
+# Создание тестовой коллекции likedFilms в БД ugc_db
+docker exec -it mongos1 bash -c 'echo "db.createCollection(\"ugc_db.likedFilms\")" | mongosh'
+# Настройка шардирования для коллекции likedFilms
+docker exec -it mongos1 bash -c 'echo "sh.shardCollection(\"ugc_db.likedFilms\", {\"film_id\": \"hashed\"})" | mongosh'
 
 # Создание тестовой коллекции reviews в БД ugc_db
 docker exec -it mongos1 bash -c 'echo "db.createCollection(\"ugc_db.reviews\")" | mongosh'

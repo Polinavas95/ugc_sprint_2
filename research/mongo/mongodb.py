@@ -4,8 +4,8 @@ from uuid import uuid4
 
 from pymongo import MongoClient
 
-from config import Settings
-from fake_data import (
+from research.config import Settings
+from research.fake_data import (
     fake_batch,
     fake_users_batch,
     fake_like_event,
@@ -14,10 +14,12 @@ from fake_data import (
 )
 
 settings = Settings()
-print('connect to database...')
-client = MongoClient('127.0.0.1', 27017)
-mongo_db = client['ugc_db']
-print('Success...')
+
+
+def ch_connetction():
+    client = MongoClient(host='127.0.0.1', port=27017, connect=False)
+    mongo_db = client['ugc_db']
+    return mongo_db
 
 
 def insert_step(
@@ -72,12 +74,18 @@ def read_data(faker: Callable, collection_name: str, users_size: int) -> None:
 
 
 if __name__ == '__main__':
+    print('connect to database...')
+    mongo_db = ch_connetction()
+    print('Success connect')
+
     print('insert def run')
-    insert(fake_like_event, settings.MONGO_COLLECTION_LIKE)
-    insert(fake_review_event, settings.MONGO_COLLECTION_REVIEW)
-    insert(fake_bookmark_event, settings.MONGO_COLLECTION_BOOKMARK)
+    insert(fake_like_event, settings.COLLECTION_LIKE)
+    insert(fake_review_event, settings.COLLECTION_REVIEW)
+    insert(fake_bookmark_event, settings.COLLECTION_BOOKMARK)
+    print('Success insert')
 
     print('read def run')
-    read_data(fake_like_event, settings.MONGO_COLLECTION_LIKE, 20)
-    read_data(fake_review_event, settings.MONGO_COLLECTION_REVIEW, 20)
-    read_data(fake_bookmark_event, settings.MONGO_COLLECTION_BOOKMARK, 20)
+    read_data(fake_like_event, settings.COLLECTION_LIKE, 20)
+    read_data(fake_review_event, settings.COLLECTION_REVIEW, 20)
+    read_data(fake_bookmark_event, settings.COLLECTION_BOOKMARK, 20)
+    print('Success read')

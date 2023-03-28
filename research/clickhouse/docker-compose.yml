@@ -14,7 +14,7 @@ services:
       - '8123:8123'
       - '9000:9000'
     volumes:
-      - ./config_ch/node1:/etc/clickhouse-server
+      - ./data/node1:/etc/clickhouse-server
     depends_on:
       - zookeeper_ch
 
@@ -23,7 +23,7 @@ services:
     container_name: clickhouse-node2
     hostname: clickhouse-node2
     volumes:
-      - ./config_ch/node2:/etc/clickhouse-server
+      - ./data/node2:/etc/clickhouse-server
     depends_on:
       - zookeeper_ch
 
@@ -32,7 +32,7 @@ services:
     container_name: clickhouse-node3
     hostname: clickhouse-node3
     volumes:
-      - ./config_ch/node3:/etc/clickhouse-server
+      - ./data/node3:/etc/clickhouse-server
     depends_on:
       - zookeeper_ch
 
@@ -41,6 +41,6 @@ services:
     container_name: clickhouse-node4
     hostname: clickhouse-node4
     volumes:
-      - ./config_ch/node4:/etc/clickhouse-server
+      - ./data/node4:/etc/clickhouse-server
     depends_on:
       - zookeeper_ch
