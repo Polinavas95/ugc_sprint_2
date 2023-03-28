@@ -69,7 +69,8 @@ def read_data(faker: Callable, collection_name: str, users_size: int) -> None:
 
     mean_batch = sum(statistics) / len(statistics)
     print(
-        f'Statistics read for {collection_name} for ~{int(settings.TEST_RECORDS_SIZE/users_size)} records: {mean_batch} sec',
+        f'Statistics read for {collection_name} for ~{int(settings.TEST_RECORDS_SIZE/users_size)}'
+        f' records: {mean_batch} sec',
     )
 
 
