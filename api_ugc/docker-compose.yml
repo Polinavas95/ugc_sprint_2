@@ -31,6 +31,36 @@ services:
     networks:
       - default
 
+  ugc_etl:
+    build:
+      context: .
+      dockerfile: etl_ugc/Dockerfile
+    container_name: ugc_etl
+    depends_on:
+      - api_ugc
+    command: >
+      python etl_ugc/app.py
+    volumes:
+      - ./etl_ugc:/code
+    env_file:
+      - etl_ugc/.env_etl_ugc
+    networks:
+      - default
+
+  filebeat:
+    container_name: ugc_filebeat
+    image: elastic/filebeat:7.3.2
+    command: filebeat -e -strict.perms=false
+    volumes:
+      - nginx_ugc:/var/log/nginx:ro
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+    depends_on:
+      - api_ugc
+      - nginx_ugc
+
+volumes:
+  nginx_ugc:
+
 networks: 
   default: 
     external: 
