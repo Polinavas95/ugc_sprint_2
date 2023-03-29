@@ -11,7 +11,7 @@ services:
     volumes:
       - ./etl:/code
     env_file:
-      - .env_etl
+      - .env_etl_ugc
     networks:
       - default
 

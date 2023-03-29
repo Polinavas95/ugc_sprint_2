@@ -21,6 +21,6 @@ run_api_ugc:
 run_clickhouse:
 	docker-compose -f ./database/clickhouse/docker-compose.yml up
 
-run_etl:
-	cp etl/.env.example etl/.env_etl
-	docker-compose -f etl/docker-compose.yml up --build -d
+run_etl_ugc:
+	cp api_ugc/etl_ugc/.env.example api_ugc/etl_ugc/.env_etl_ugc
+	docker-compose -f api_ugc/etl_ugc/docker-compose.yml up --build -d

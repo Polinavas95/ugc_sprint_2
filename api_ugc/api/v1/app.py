@@ -6,7 +6,7 @@ def read_root() -> dict[str, str]:
     return {'Hello': 'World'}
 
 
-@app.get('/v1/api/movies/event')
+@app.get('/v1/api/movies/event', tags=['viewed_film'])
 def read_item() -> dict[str, str]:
     event = producer.send_generated_event()
 

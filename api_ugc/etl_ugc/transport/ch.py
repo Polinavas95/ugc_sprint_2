@@ -20,13 +20,17 @@ class ETLClickhouseDriver:
 
     def ch_database_init(self) -> None:
         self.client.execute(
-            f'CREATE DATABASE IF NOT EXISTS {self.db} ON CLUSTER company_cluster'
+            f'CREATE DATABASE IF NOT EXISTS {self.db} '
+            f'ON CLUSTER company_cluster'
         )
         for table in self.tables:
             self.client.execute(
                 f"""
-                CREATE TABLE IF NOT EXISTS {self.db}.{table} ON CLUSTER company_cluster
-                (timezone String, ip String, user_id UUID, movie_id UUID, event String, viewed_frame Int64, date Date) 
+                CREATE TABLE IF NOT EXISTS {self.db}.{table} 
+                ON CLUSTER company_cluster
+                (timezone String, ip String, user_id UUID, 
+                movie_id UUID, event String, 
+                viewed_frame Int64, date Date) 
                 Engine=MergeTree()
                 ORDER BY user_id
                 """

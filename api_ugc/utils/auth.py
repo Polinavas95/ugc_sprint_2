@@ -2,7 +2,7 @@ from fastapi import HTTPException, Security, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 
-from config.config import get_settings
+from config import get_settings
 
 oauth_schema = HTTPBearer()
 settings = get_settings()
