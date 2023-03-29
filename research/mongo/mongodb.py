@@ -4,8 +4,8 @@ from uuid import uuid4
 
 from pymongo import MongoClient
 
-from research.config import Settings
-from research.fake_data import (
+from config import Settings
+from fake_data import (
     fake_batch,
     fake_users_batch,
     fake_like_event,
