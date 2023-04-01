@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.7", "3.8", "3.9", "3.10" ]
+        python-version: [ '3.7', '3.8', '3.9', '3.10']
 
     steps:
       # Переход на заданный репозиторий или ветку
@@ -46,4 +46,10 @@ jobs:
           run: poetry install --no-interaction
 
       - name: Run linting
-          run: poetry run make lint
+        run: poetry run make lint
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: reports
+          path: reports/
