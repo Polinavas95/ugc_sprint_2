@@ -1,10 +1,5 @@
-from config.config import get_settings
-from utils.kafka_producer import KafkaUserMovieProducer
 from fastapi import FastAPI
+from api.v1.app import api_router
 
-settings = get_settings()
 app = FastAPI()
-producer = KafkaUserMovieProducer(
-    topic=settings.kafka_settings.kafka_topic_name,
-    bootstrap_servers=settings.kafka_settings.kafka_broker,
-)
+app.include_router(api_router)

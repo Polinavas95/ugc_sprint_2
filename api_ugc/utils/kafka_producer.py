@@ -70,7 +70,7 @@ class KafkaUserMovieProducer(UserMovieProducer):
         return EventForUGS(
             event_view=EventView(
                 movie_id=uuid4(),
-                user_id=Security(auth),
+                user_id=uuid4(),  # Security(auth),
                 event=event,
                 viewed_frame=viewed_frame,
                 date=datetime.now(),
