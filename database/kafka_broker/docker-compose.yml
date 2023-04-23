@@ -25,5 +25,5 @@ services:
   
 networks:
   default:
-    external:
-      name: network
+    driver: bridge
+    name: network
