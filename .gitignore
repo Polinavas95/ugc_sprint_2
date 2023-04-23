@@ -95,16 +95,15 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
-.env-api
-.env-auth
+.env-*
+.env_*
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
-etl/.env_etl
+api_ugc/etl_ugc/.env_etl_ugc
 api_ugc/.env_ugc
 
 # Spyder project settings
@@ -165,6 +164,7 @@ instance/
 # PyCharm
 auth_service/requirements.txt
 tests/requirements.txt
+reports
 
 # DB files
 *.db
