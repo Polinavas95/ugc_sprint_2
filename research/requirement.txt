@@ -1,0 +1,5 @@
+pymongo==4.2.0
+faker==14.2.0
+clickhouse_driver==0.2.5
+backoff==2.2.1
+dnspython==2.3.0

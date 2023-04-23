@@ -37,6 +37,9 @@ djlint = "^1.19.14"
 
 [tool.blue]
 line-length = 79
+exclude = [
+    "research",
+]
 
 [tool.pytest.ini_options]
 filterwarnings = ["ignore::DeprecationWarning"]
@@ -58,7 +61,8 @@ exclude = [
     "database/kafka_broker",
     "etl/models/models.py",
     "api_ugc/api",
-    "etl"
+    "etl",
+    "research"
 ]
 
 [tool.ruff]
@@ -89,7 +93,8 @@ ignore = ["A003", "I001", "PLR2004", "PLE1205", "RET507", "B008"]
 exclude = [
     "database/clickhouse/init_database.py",
     "etl/transport/ch.py",
-    "auth_service/main.py"
+    "auth_service/main.py",
+    "research"
 ]
 target-version = "py310"
 
