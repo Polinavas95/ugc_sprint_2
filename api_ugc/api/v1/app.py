@@ -10,7 +10,7 @@ producer = KafkaUserMovieProducer(
 )
 
 api_router = APIRouter(
-    prefix="/v1/api",
+    prefix="/api/v1",
     responses={404: {"description": "Not found"}},
 )
 
