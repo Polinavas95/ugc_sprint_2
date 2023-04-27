@@ -1,10 +1,11 @@
 from http import HTTPStatus
 from requests import post, get
 import time
-
-from functional.settings import get_settings
+from loguru import logger
+from tests.functional.settings import get_settings
 
 test_url = f'{get_settings().service_url}/api/v1/movies/event'
+logger.error(test_url)
 
 
 def test_success_get_request():
@@ -33,13 +34,15 @@ def test_success_send_1000_rows_to_kafka(clickhouse_client):
             'event': str(i),
             'viewed_frame': '123',
             'date': 'date',
-            'timezone': 'UTC'
+            'timezone': 'UTC',
         }
         post(url=test_url, json=data)
 
     # sleep before data gets to clickhouse table
     time.sleep(10)
-    count_rows_after_insert = clickhouse_client.query(query).first_item.get('count')
+    count_rows_after_insert = clickhouse_client.query(query).first_item.get(
+        'count'
+    )
 
     assert (count_rows_after_insert - start_count_rows) == total_insert
 
@@ -48,7 +51,11 @@ def test_invalid_json_body_send_to_kafka():
     """
     Сервис UGC должен возвращать ошибку 422 при передаче некорректного тела запроса.
     """
-    test_incorrect_data = {"film_id": "id3", "user_id": "id2", "incorrect_field": 1}
+    test_incorrect_data = {
+        "film_id": "id3",
+        "user_id": "id2",
+        "incorrect_field": 1,
+    }
     response = post(url=test_url, json=test_incorrect_data)
 
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY

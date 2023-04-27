@@ -7,15 +7,17 @@ from pydantic import BaseSettings, Field
 
 class BaseConfig(BaseSettings):
     click_host: str = Field('clickhouse://localhost', env='CH_HOST')
-    service_url: str = Field('http://localhost:8123', env='UGC_SERVICE_URL')
+    service_url: str = Field('http://nginx_ugc:80', env='UGC_SERVICE_URL')
 
     click_db: str = Field('movies', env='CH_DB')
-    click_table: list[str] = Field(['movie_watch_history'], env=list('EVENT_TYPES'))
+    click_table: list[str] = Field(['movie_watch_history'])
 
-    secret_key: str = Field('ddfsfdsjlzfjdsl8fdsfhjdks7sdnaaf32jfkldsJ', env='APP_KEY')
+    secret_key: str = Field(
+        'ddfsfdsjlzfjdsl8fdsfhjdks7sdnaaf32jfkldsJ', env='APP_KEY'
+    )
     algorithm: str = Field('HS256', env='ALGORITHM')
 
-    kafka_topic_name: list[str] = Field(['user_movie'], env=list('EVENT_TYPES'))
+    # kafka_topic_name: list[str] = Field(['user_movie'], env='KAFKA_TOPIC_NAME')
     kafka_broker: str = Field('localhost:29092', env='KAFKA_BROKER')
 
     class Config:

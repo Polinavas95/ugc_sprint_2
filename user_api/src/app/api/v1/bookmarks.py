@@ -4,9 +4,12 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.models.user_bookmarks import UserBookmarks
-from app.service.auth import Auth
-from app.service.bookmarks import UserBookmarksService, get_user_bookmarks_service
+from user_api.src.app.models.user_bookmarks import UserBookmarks
+from user_api.src.app.service.auth import Auth
+from user_api.src.app.service.bookmarks import (
+    UserBookmarksService,
+    get_user_bookmarks_service,
+)
 
 router = APIRouter()
 auth_handler = Auth()
@@ -20,7 +23,9 @@ auth_handler = Auth()
 )
 async def get_bookmarks(
     user_id: str = Depends(auth_handler),
-    bookmarks_service: UserBookmarksService = Depends(get_user_bookmarks_service),
+    bookmarks_service: UserBookmarksService = Depends(
+        get_user_bookmarks_service
+    ),
 ) -> Union[UserBookmarks, None]:
     bookmarks = await bookmarks_service.get(user_id)
     if not bookmarks:
@@ -40,7 +45,9 @@ async def get_bookmarks(
 async def add_bookmarks(
     movie_id: UUID,
     user_id: str = Depends(auth_handler),
-    bookmarks_service: UserBookmarksService = Depends(get_user_bookmarks_service),
+    bookmarks_service: UserBookmarksService = Depends(
+        get_user_bookmarks_service
+    ),
 ) -> Union[UserBookmarks, None]:
     bookmarks = await bookmarks_service.add(user_id, movie_id)
     if not bookmarks:
@@ -60,7 +67,9 @@ async def add_bookmarks(
 async def delete_bookmarks(
     movie_id: UUID,
     user_id: str = Depends(auth_handler),
-    bookmarks_service: UserBookmarksService = Depends(get_user_bookmarks_service),
+    bookmarks_service: UserBookmarksService = Depends(
+        get_user_bookmarks_service
+    ),
 ) -> Union[UserBookmarks, None]:
     bookmarks = await bookmarks_service.remove(user_id, movie_id)
     if not bookmarks:

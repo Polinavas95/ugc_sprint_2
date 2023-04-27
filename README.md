@@ -17,6 +17,7 @@ poetry run make run_kafka
 poetry run make run_clickhouse
 poetry run make run_elk
 poetry run make run_user_api
+poetry run make run_api_ugc
 ```
 
 * Добавьте файл `.env_user_api` и укажите в нём DNS для Sentry, который можно получить в своём аккаунте.

@@ -4,19 +4,22 @@ from uuid import UUID
 from fastapi import Depends
 from motor.core import AgnosticCollection
 
-from app.db.mongo_db import get_mongo
-from app.models.film_likes_schema import MovieLikeSchema
+from user_api.src.app.db.mongo_db import get_mongo
+from user_api.src.app.models.film_likes_schema import MovieLikeSchema
 
-from app.utils.functions import get_rating
+from user_api.src.app.utils.functions import get_rating
 
 
 class MovieLikesService:
-
-    def __init__(self, model: Type[MovieLikeSchema], collection: AgnosticCollection):
+    def __init__(
+        self, model: Type[MovieLikeSchema], collection: AgnosticCollection
+    ):
         self.model = model
         self.collection = collection
 
-    async def _get_movie_data(self, movie_filter: Dict[str, str]) -> Optional[Dict[str, int]]:
+    async def _get_movie_data(
+        self, movie_filter: Dict[str, str]
+    ) -> Optional[Dict[str, int]]:
 
         if movie_document := await self.collection.find_one(movie_filter):
             response_data = {
@@ -29,7 +32,9 @@ class MovieLikesService:
 
         return None
 
-    async def add_like_dislike(self, user_id: str, movie_id: Union[UUID, str], like: bool) -> MovieLikeSchema:
+    async def add_like_dislike(
+        self, user_id: str, movie_id: Union[UUID, str], like: bool
+    ) -> MovieLikeSchema:
         movie_id = str(movie_id)
         movie_filter = {'movie_id': movie_id}
         if movie := await self.collection.find_one(movie_filter):
@@ -96,7 +101,8 @@ class MovieLikesService:
                 'rating': get_rating(like_by, dislike_by),
             }
             await self.collection.update_one(
-                movie_filter, {'$set': movie_data},
+                movie_filter,
+                {'$set': movie_data},
             )
 
             movie_response_data = await self._get_movie_data(movie_filter)

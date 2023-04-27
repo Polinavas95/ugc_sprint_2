@@ -5,19 +5,23 @@ from typing import Dict, List, Optional, Type
 from fastapi import Depends
 from motor.core import AgnosticCollection
 
-from app.db.mongo_db import get_mongo
-from app.models.user_reviews import UserReview
-from app.utils.functions import get_rating
+from user_api.src.app.db.mongo_db import get_mongo
+from user_api.src.app.models.user_reviews import UserReview
+from user_api.src.app.utils.functions import get_rating
 
 
 class UserReviewsService:
     """Class with service functions."""
 
-    def __init__(self, model: Type[UserReview], collection: AgnosticCollection):
+    def __init__(
+        self, model: Type[UserReview], collection: AgnosticCollection
+    ):
         self.model = model
         self.collection = collection
 
-    async def add(self, movie_id: uuid.UUID, user_id: str, text: str) -> UserReview:
+    async def add(
+        self, movie_id: uuid.UUID, user_id: str, text: str
+    ) -> UserReview:
         review_id = str(uuid.uuid4())
         review_filter = {'review_id': review_id}
         await self.collection.insert_one(
@@ -54,10 +58,14 @@ class UserReviewsService:
             reviews.sort('created', -1)
         reviews_list = []
         async for review in reviews:
-            likes = await self.collection.find_one({'review_id': review['review_id']}, {'like_by'})
+            likes = await self.collection.find_one(
+                {'review_id': review['review_id']}, {'like_by'}
+            )
             if 'like_by' in likes:
                 likes = likes['like_by']
-            dislikes = await self.collection.find_one({'review_id': review['review_id']}, {'dislike_by'})
+            dislikes = await self.collection.find_one(
+                {'review_id': review['review_id']}, {'dislike_by'}
+            )
             if 'dislike_by' in likes:
                 dislikes = likes['like_by']
             rating = get_rating(likes, dislikes)
@@ -66,12 +74,16 @@ class UserReviewsService:
         if rating_sort == 'asc':
             reviews_list = sorted(reviews_list, key=lambda x: x.rating)
         if rating_sort == 'desc':
-            reviews_list = sorted(reviews_list, key=lambda x: x.rating, reverse=True)
+            reviews_list = sorted(
+                reviews_list, key=lambda x: x.rating, reverse=True
+            )
         if reviews:
             return reviews_list
         return None
 
-    async def add_like(self, user_id: str, review_id: uuid.UUID) -> Dict[str, int]:
+    async def add_like(
+        self, user_id: str, review_id: uuid.UUID
+    ) -> Dict[str, int]:
         """
         Add like to review and delete dislike if already have.
 
@@ -81,14 +93,24 @@ class UserReviewsService:
         """
         review_filter = {'review_id': str(review_id)}
         # selects the documents where the value of a field equals any value in the specified array
-        dislike = await self.collection.find_one({'dislike_by': {'$in': [user_id]}}, {'dislike_by': user_id})
+        dislike = await self.collection.find_one(
+            {'dislike_by': {'$in': [user_id]}}, {'dislike_by': user_id}
+        )
         if dislike is not None and dislike['dislike_by'] == user_id:
-            await self.collection.update_one(review_filter, {'$pull': {'dislike_by': user_id}}, upsert=True)
-        await self.collection.update_one(review_filter, {'$addToSet': {'like_by': user_id}}, upsert=True)
-        like = await self.collection.find_one({'like_by': {'$in': [user_id]}}, {'like_by': user_id})
+            await self.collection.update_one(
+                review_filter, {'$pull': {'dislike_by': user_id}}, upsert=True
+            )
+        await self.collection.update_one(
+            review_filter, {'$addToSet': {'like_by': user_id}}, upsert=True
+        )
+        like = await self.collection.find_one(
+            {'like_by': {'$in': [user_id]}}, {'like_by': user_id}
+        )
         return like
 
-    async def add_dislike(self, user_id: str, review_id: str) -> Dict[int, str]:
+    async def add_dislike(
+        self, user_id: str, review_id: str
+    ) -> Dict[int, str]:
         """
         Add dislike to review and delete like if already have.
 
@@ -97,11 +119,19 @@ class UserReviewsService:
         :return: User ID
         """
         review_filter = {'review_id': review_id}
-        like = await self.collection.find_one({'like_by': {'$in': [user_id]}}, {'like_by': user_id})
+        like = await self.collection.find_one(
+            {'like_by': {'$in': [user_id]}}, {'like_by': user_id}
+        )
         if like is not None and like['like_by'] == user_id:
-            await self.collection.update_one(review_filter, {'$pull': {'like_by': user_id}}, upsert=True)
-        await self.collection.update_one(review_filter, {'$addToSet': {'dislike_by': user_id}}, upsert=True)
-        dislike = await self.collection.find_one({'dislike_by': {'$in': [user_id]}}, {'dislike_by': user_id})
+            await self.collection.update_one(
+                review_filter, {'$pull': {'like_by': user_id}}, upsert=True
+            )
+        await self.collection.update_one(
+            review_filter, {'$addToSet': {'dislike_by': user_id}}, upsert=True
+        )
+        dislike = await self.collection.find_one(
+            {'dislike_by': {'$in': [user_id]}}, {'dislike_by': user_id}
+        )
         return dislike
 
 

@@ -4,9 +4,12 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPBasicCredentials, HTTPBearer
 
-from app.models.film_likes_schema import MovieLikeSchema
-from app.service.auth import Auth
-from app.service.likes import MovieLikesService, get_user_bookmarks_service
+from user_api.src.app.models.film_likes_schema import MovieLikeSchema
+from user_api.src.app.service.auth import Auth
+from user_api.src.app.service.likes import (
+    MovieLikesService,
+    get_user_bookmarks_service,
+)
 
 auth_handler = Auth()
 router = APIRouter()
@@ -25,7 +28,9 @@ async def add_like_dislike(
     user_id: str = Depends(auth_handler),
     likes_service: MovieLikesService = Depends(get_user_bookmarks_service),
 ) -> MovieLikeSchema:
-    movie_user_data = await likes_service.add_like_dislike(user_id, movie_id, like)
+    movie_user_data = await likes_service.add_like_dislike(
+        user_id, movie_id, like
+    )
     return movie_user_data
 
 
@@ -42,9 +47,14 @@ async def remove_like_dislike(
     likes_service: MovieLikesService = Depends(get_user_bookmarks_service),
 ) -> MovieLikeSchema:
     try:
-        if movie_user_data := await likes_service.remove_like_dislike(user_id, movie_id, like):
+        if movie_user_data := await likes_service.remove_like_dislike(
+            user_id, movie_id, like
+        ):
             return movie_user_data
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f'Movie with {movie_id} not found.')
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail=f'Movie with {movie_id} not found.',
+        )
     except ValueError as e:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
@@ -68,4 +78,7 @@ async def get_like_dislike(
 
     if movie_user_data := await likes_service.get(movie_id):
         return movie_user_data
-    raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f'Movie with {movie_id} not found.')
+    raise HTTPException(
+        status_code=HTTPStatus.NOT_FOUND,
+        detail=f'Movie with {movie_id} not found.',
+    )

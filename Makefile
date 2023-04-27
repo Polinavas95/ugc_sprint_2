@@ -28,4 +28,8 @@ run_user_api:
 	bash ./user_api/src/create_claster.sh
 
 run_elk:
-	docker-compose -f ./database/elk/docker-compose.yml up
+	docker-compose -f ./elk/docker-compose.yml up
+
+test:
+	cd tests
+	pytest .

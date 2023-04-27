@@ -4,13 +4,14 @@ from uuid import UUID
 from fastapi import Depends
 from motor.core import AgnosticCollection
 
-from app.db.mongo_db import get_mongo
-from app.models.user_bookmarks import UserBookmarks
+from user_api.src.app.db.mongo_db import get_mongo
+from user_api.src.app.models.user_bookmarks import UserBookmarks
 
 
 class UserBookmarksService:
-
-    def __init__(self, model: Type[UserBookmarks], collection: AgnosticCollection):
+    def __init__(
+        self, model: Type[UserBookmarks], collection: AgnosticCollection
+    ):
         self.model = model
         self.collection = collection
 
@@ -18,14 +19,20 @@ class UserBookmarksService:
         user_filter = {'user_id': user_id}
         # Update a single document matching the filter
         #
-        await self.collection.update_one(user_filter, {'$addToSet': {'bookmarks': str(movie_id)}}, upsert=True)
+        await self.collection.update_one(
+            user_filter,
+            {'$addToSet': {'bookmarks': str(movie_id)}},
+            upsert=True,
+        )
         # Get a single document from the database
         new_document = await self.collection.find_one(user_filter)
         return self.model(**new_document)
 
     async def remove(self, user_id: str, movie_id: UUID) -> UserBookmarks:
         user_filter = {'user_id': user_id}
-        await self.collection.update_one(user_filter, {'$pull': {'bookmarks': str(movie_id)}})
+        await self.collection.update_one(
+            user_filter, {'$pull': {'bookmarks': str(movie_id)}}
+        )
         new_document = await self.collection.find_one(user_filter)
         return self.model(**new_document)
 
