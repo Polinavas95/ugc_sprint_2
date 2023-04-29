@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 import requests
 from uuid import uuid4
 
@@ -5,7 +7,7 @@ BASE_URL = 'http://localhost:8011'
 mock_bookmark_id = uuid4()
 
 token = 'my_bearer_token'
-headers = {'Authorization': f'Bearer {token}'}
+headers = {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
 
 
 # Test GET /api/v1/bookmarks
@@ -13,7 +15,7 @@ def test_get_bookmarks():
     response = requests.get(f'{BASE_URL}/api/v1/bookmarks', headers=headers)
     print(f'{BASE_URL}/api/v1/bookmarks')
     print(requests.get(f'{BASE_URL}/api/v1/bookmarks'))
-    assert response.status_code == 200
+    assert response.status_code == HTTPStatus.OK
     assert response.json() == {
         'bookmarks': []
     }   # Assuming an empty bookmarks list for a new user

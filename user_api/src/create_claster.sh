@@ -29,10 +29,10 @@ docker exec -it mongos1 bash -c 'echo "db.createCollection(\"ugc_db.movie_likes\
 # Настройка шардирования для коллекции movie_likes
 docker exec -it mongos1 bash -c 'echo "sh.shardCollection(\"ugc_db.movie_likes\", {\"film_id\": \"hashed\"})" | mongosh'
 
-# Создание тестовой коллекции user_bookmarks в БД ugc_db
-docker exec -it mongos1 bash -c 'echo "db.createCollection(\"ugc_db.user_bookmarks\")" | mongosh'
-# Настройка шардирования для коллекции user_bookmarks
-docker exec -it mongos1 bash -c 'echo "sh.shardCollection(\"ugc_db.user_bookmarks\", {\"film_id\": \"hashed\"})" | mongosh'
+# Создание тестовой коллекции user_reviews в БД ugc_db
+docker exec -it mongos1 bash -c 'echo "db.createCollection(\"ugc_db.user_reviews\")" | mongosh'
+# Настройка шардирования для коллекции user_reviews
+docker exec -it mongos1 bash -c 'echo "sh.shardCollection(\"ugc_db.user_reviews\", {\"film_id\": \"hashed\"})" | mongosh'
 
 # Создание тестовой коллекции user_bookmarks в БД ugc_db
 docker exec -it mongos1 bash -c 'echo "db.createCollection(\"ugc_db.user_bookmarks\")" | mongosh'
