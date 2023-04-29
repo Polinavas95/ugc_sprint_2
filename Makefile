@@ -28,6 +28,7 @@ run_user_api:
 
 run_user_api_test:
 	docker-compose -f ./user_api/docker-compose-test.yml up --build -d
+	bash ./user_api/src/create_claster.sh
 
 run_elk:
 	docker-compose -f ./elk/docker-compose.yml up --build -d
