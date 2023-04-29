@@ -164,7 +164,6 @@ instance/
 
 # PyCharm
 auth_service/requirements.txt
-tests/requirements.txt
 reports
 
 # DB files

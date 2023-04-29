@@ -48,6 +48,13 @@ jobs:
       - name: Run linting
         run: poetry run make lint
 
+#      - name: Run tests
+#        run: |
+#          mkdir logs
+#          pip install -r api_ugc/requirements.txt
+#          pip install -r tests/requirements.txt
+#          PYTHONPATH="api_ugc" python -m pytest tests/
+
       - name: Upload reports
         uses: actions/upload-artifact@v3
         with:

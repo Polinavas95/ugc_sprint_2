@@ -4,6 +4,7 @@ from elasticapm.contrib.starlette import make_apm_client, ElasticAPM
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
+from loguru import logger
 
 from app.api.v1 import likes, review, bookmarks
 from app.core.config import Settings
@@ -60,6 +61,4 @@ app.include_router(review.router, prefix='/api/v1/review', tags=['Reviews'])
 app.include_router(
     bookmarks.router, prefix='/api/v1/bookmarks', tags=['Bookmarks']
 )
-
-if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=8000)  # noqa S104
+logger.info("ROUTERS CONNECTED")

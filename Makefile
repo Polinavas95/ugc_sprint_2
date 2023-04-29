@@ -9,8 +9,8 @@ lint:
 	poetry run pip-audit
 
 run_kafka:
-	docker-compose -f ./database/kafka_broker/docker-compose.yml up --build -d
-	poetry run python3 ./database/kafka_broker/kafka_utils/setup_kafka.py
+	docker-compose -f database/kafka_broker/docker-compose.yml up --build -d
+	poetry run python3 database/kafka_broker/kafka_utils/setup_kafka.py
 	
 
 run_api_ugc:
