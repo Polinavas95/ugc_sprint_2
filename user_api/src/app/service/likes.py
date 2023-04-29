@@ -21,7 +21,9 @@ class MovieLikesService:
         self, movie_filter: Dict[str, str]
     ) -> Optional[Dict[str, int]]:
 
-        if movie_document := await self.collection.find_one(movie_filter):
+        if movie_document := await self.collection.find_one(
+            {'film_id': movie_filter['film_id'], **movie_filter}
+        ):
             response_data = {
                 'movie_id': movie_document['movie_id'],
                 'likes': len(movie_document['like_by']),
@@ -37,7 +39,10 @@ class MovieLikesService:
     ) -> MovieLikeSchema:
         movie_id = str(movie_id)
         movie_filter = {'movie_id': movie_id}
-        if movie := await self.collection.find_one(movie_filter):
+        movie_data = {}
+        if movie := await self.collection.find_one(
+            {'film_id': self.shard_key(movie_id), **movie_filter}
+        ):
             like_by = set(movie['like_by'])
             dislike_by = set(movie['dislike_by'])
 
@@ -54,10 +59,6 @@ class MovieLikesService:
                 'dislike_by': list(dislike_by),
                 'rating': get_rating(like_by, dislike_by),
             }
-            await self.collection.update_one(
-                movie_filter,
-                {'$set': movie_data},
-            )
         else:
             like_by = [user_id] if like else []  # type: ignore[assignment]
             dislike_by = [user_id] if not like else []  # type: ignore[assignment]
@@ -67,15 +68,23 @@ class MovieLikesService:
                 'like_by': list(like_by),
                 'dislike_by': list(dislike_by),
                 'rating': rating,
+                'film_id': self.shard_key(movie_id),
             }
-            await self.collection.insert_one(movie_data)
+
+        await self.collection.update_one(
+            {'film_id': self.shard_key(movie_id), **movie_filter},
+            {'$set': movie_data},
+            upsert=True,
+        )
 
         movie_response_data = await self._get_movie_data(movie_filter)
         return self.model(**movie_response_data)  # type: ignore[arg-type]
 
     async def get(self, movie_id: UUID) -> Optional[MovieLikeSchema]:
         movie_filter = {'movie_id': str(movie_id)}
-        if movie_response_data := await self._get_movie_data(movie_filter):
+        if movie_response_data := await self._get_movie_data(
+            {'film_id': self.shard_key(str(movie_id)), **movie_filter}
+        ):
             return self.model(**movie_response_data)
 
         return None
@@ -100,9 +109,18 @@ class MovieLikesService:
                 'dislike_by': dislike_by,
                 'rating': get_rating(like_by, dislike_by),
             }
+
+            # Modify the query to target the appropriate shard based on the shard key
+            shard_key = {'film_id': hash(movie_id)}
             await self.collection.update_one(
                 movie_filter,
                 {'$set': movie_data},
+                # Set the shard key to ensure the update is sent to the correct shard
+                # and to prevent the "could not extract exact shard key" error.
+                # Also, use the "upsert" option to create a new document if one doesn't already exist.
+                upsert=True,
+                collation={'locale': 'en'},
+                hint=shard_key,
             )
 
             movie_response_data = await self._get_movie_data(movie_filter)

@@ -20,38 +20,39 @@ class UserReviewsService:
         self.collection = collection
 
     async def add(
-        self, movie_id: uuid.UUID, user_id: str, text: str
+        self, film_id: uuid.UUID, user_id: str, text: str
     ) -> UserReview:
         review_id = str(uuid.uuid4())
         review_filter = {'review_id': review_id}
         await self.collection.insert_one(
             {
-                'movie_id': str(movie_id),
+                'film_id': str(film_id),
                 'review_id': review_id,
                 'user_id': user_id,
                 'created': datetime.datetime.today().replace(microsecond=0),
                 'text': text,
             },
+            shard_key={'film_id': str(film_id)},
         )
         review = await self.collection.find_one(review_filter)
         return self.model(**review)
 
     async def get(
         self,
-        movie_id: uuid.UUID,
+        film_id: uuid.UUID,
         rating_sort: Optional[str],
         created_sort: Optional[str],
     ) -> Optional[List[UserReview]]:
         """
-        Get list of reviews by movie_id.
+        Get list of reviews by film_id.
 
-        :param movie_id: Movie ID
+        :param film_id: Film ID
         :param rating_sort: Rating sorting[asc, desc]
         :param created_sort: Created time sorting[asc, desc]
         :return: List of reviews
         """
-        movie_filter = {'movie_id': str(movie_id)}
-        reviews = self.collection.find(movie_filter)
+        film_filter = {'film_id': str(film_id)}
+        reviews = self.collection.find(film_filter)
         if created_sort == 'asc':
             reviews.sort('created', 1)
         if created_sort == 'desc':
@@ -66,8 +67,8 @@ class UserReviewsService:
             dislikes = await self.collection.find_one(
                 {'review_id': review['review_id']}, {'dislike_by'}
             )
-            if 'dislike_by' in likes:
-                dislikes = likes['like_by']
+            if 'dislike_by' in dislikes:
+                dislikes = dislikes['dislike_by']
             rating = get_rating(likes, dislikes)
             review['rating'] = float('{:.1f}'.format(rating))
             reviews_list.append(self.model(**review))
@@ -91,25 +92,34 @@ class UserReviewsService:
         :param review_id: Review ID
         :return: User ID
         """
+        shard_key = {'film_id': review_id}
         review_filter = {'review_id': str(review_id)}
         # selects the documents where the value of a field equals any value in the specified array
         dislike = await self.collection.find_one(
-            {'dislike_by': {'$in': [user_id]}}, {'dislike_by': user_id}
+            shard_key,
+            {'dislike_by': {'$in': [user_id]}},
+            {'dislike_by': user_id},
         )
         if dislike is not None and dislike['dislike_by'] == user_id:
             await self.collection.update_one(
-                review_filter, {'$pull': {'dislike_by': user_id}}, upsert=True
+                shard_key,
+                review_filter,
+                {'$pull': {'dislike_by': user_id}},
+                upsert=True,
             )
         await self.collection.update_one(
-            review_filter, {'$addToSet': {'like_by': user_id}}, upsert=True
+            shard_key,
+            review_filter,
+            {'$addToSet': {'like_by': user_id}},
+            upsert=True,
         )
         like = await self.collection.find_one(
-            {'like_by': {'$in': [user_id]}}, {'like_by': user_id}
+            shard_key, {'like_by': {'$in': [user_id]}}, {'like_by': user_id}
         )
         return like
 
     async def add_dislike(
-        self, user_id: str, review_id: str
+        self, user_id: str, review_id: uuid.UUID
     ) -> Dict[int, str]:
         """
         Add dislike to review and delete like if already have.
@@ -118,19 +128,28 @@ class UserReviewsService:
         :param review_id: Review ID
         :return: User ID
         """
-        review_filter = {'review_id': review_id}
+        shard_key = {'film_id': review_id}
+        review_filter = {'review_id': str(review_id)}
         like = await self.collection.find_one(
-            {'like_by': {'$in': [user_id]}}, {'like_by': user_id}
+            shard_key, {'like_by': {'$in': [user_id]}}, {'like_by': user_id}
         )
         if like is not None and like['like_by'] == user_id:
             await self.collection.update_one(
-                review_filter, {'$pull': {'like_by': user_id}}, upsert=True
+                shard_key,
+                review_filter,
+                {'$pull': {'like_by': user_id}},
+                upsert=True,
             )
         await self.collection.update_one(
-            review_filter, {'$addToSet': {'dislike_by': user_id}}, upsert=True
+            shard_key,
+            review_filter,
+            {'$addToSet': {'dislike_by': user_id}},
+            upsert=True,
         )
         dislike = await self.collection.find_one(
-            {'dislike_by': {'$in': [user_id]}}, {'dislike_by': user_id}
+            shard_key,
+            {'dislike_by': {'$in': [user_id]}},
+            {'dislike_by': user_id},
         )
         return dislike
 

@@ -16,20 +16,21 @@ class UserBookmarksService:
         self.collection = collection
 
     async def add(self, user_id: str, movie_id: UUID) -> UserBookmarks:
+        document = {
+            'user_id': user_id,
+            'film_id': hash(str(movie_id)),
+            'bookmarks': [str(movie_id)],
+        }
         user_filter = {'user_id': user_id}
-        # Update a single document matching the filter
+        # Insert a single document
         #
-        await self.collection.update_one(
-            user_filter,
-            {'$addToSet': {'bookmarks': str(movie_id)}},
-            upsert=True,
-        )
+        await self.collection.insert_one(document)
         # Get a single document from the database
         new_document = await self.collection.find_one(user_filter)
         return self.model(**new_document)
 
     async def remove(self, user_id: str, movie_id: UUID) -> UserBookmarks:
-        user_filter = {'user_id': user_id}
+        user_filter = {'user_id': user_id, 'film_id': {'$exists': True}}
         await self.collection.update_one(
             user_filter, {'$pull': {'bookmarks': str(movie_id)}}
         )
@@ -37,7 +38,7 @@ class UserBookmarksService:
         return self.model(**new_document)
 
     async def get(self, user_id: str) -> Optional[UserBookmarks]:
-        user_filter = {'user_id': user_id}
+        user_filter = {'user_id': user_id, 'film_id': {'$exists': True}}
         bookmarks = await self.collection.find_one(user_filter)
         if bookmarks:
             return self.model(**bookmarks)
