@@ -6,9 +6,9 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Response
 
-from user_api.src.app.models.user_reviews import UserReview
-from user_api.src.app.service.auth import Auth
-from user_api.src.app.service.reviews import (
+from app.models.user_reviews import UserReview
+from app.service.auth import Auth
+from app.service.reviews import (
     UserReviewsService,
     get_user_reviews_service,
 )

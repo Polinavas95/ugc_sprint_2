@@ -16,5 +16,7 @@ class Settings(BaseSettings):
     mongo_host: str = Field('mongos1', env='MONGO_HOST')
     mongo_port: str = Field('27017', env='MONGO_PORT')
 
+    use_auth: bool = Field(True, env='USE_AUTH')
+
     class Config:
-        env_file = '.env'
+        env_file = '.env_user_api'

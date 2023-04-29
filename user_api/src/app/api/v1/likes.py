@@ -4,9 +4,9 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPBasicCredentials, HTTPBearer
 
-from user_api.src.app.models.film_likes_schema import MovieLikeSchema
-from user_api.src.app.service.auth import Auth
-from user_api.src.app.service.likes import (
+from app.models.film_likes_schema import MovieLikeSchema
+from app.service.auth import Auth
+from app.service.likes import (
     MovieLikesService,
     get_user_bookmarks_service,
 )

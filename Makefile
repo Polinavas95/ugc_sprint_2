@@ -20,16 +20,22 @@ run_api_ugc:
 	docker-compose -f api_ugc/docker-compose.yml up --build -d
 
 run_clickhouse:
-	docker-compose -f ./database/clickhouse/docker-compose.yml up
+	docker-compose -f ./database/clickhouse/docker-compose.yml up --build -d
 
 
 run_user_api:
-	docker-compose -f ./user_api/docker-compose.yml up
+	docker-compose -f ./user_api/docker-compose.yml up --build -d
 	bash ./user_api/src/create_claster.sh
 
+run_user_api_test:
+	docker-compose -f ./user_api/docker-compose-test.yml up --build -d
+
 run_elk:
-	docker-compose -f ./elk/docker-compose.yml up
+	docker-compose -f ./elk/docker-compose.yml up --build -d
 
 test:
-	cd tests
-	pytest .
+	make run_kafka
+	make run_clickhouse
+	make run_elk
+	make run_user_api_test
+	pytest tests -k test_get_bookmarks

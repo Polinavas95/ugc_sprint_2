@@ -5,9 +5,9 @@ from typing import Dict, List, Optional, Type
 from fastapi import Depends
 from motor.core import AgnosticCollection
 
-from user_api.src.app.db.mongo_db import get_mongo
-from user_api.src.app.models.user_reviews import UserReview
-from user_api.src.app.utils.functions import get_rating
+from app.db.mongo_db import get_mongo
+from app.models.user_reviews import UserReview
+from app.utils.functions import get_rating
 
 
 class UserReviewsService:

@@ -1,45 +1,35 @@
-import pytest
-from fastapi import FastAPI
-from fastapi.testclient import TestClient
-from http import HTTPStatus
-from uuid import UUID
-from os import path
-import sys
+import requests
 
-sys.path.append(path.abspath('../..'))
-from user_api.src.app.api.v1.bookmarks import router
+BASE_URL = 'http://localhost:8011'
 
+token = 'my_bearer_token'
+headers = {'Authorization': f'Bearer {token}'}
 
-@pytest.fixture(scope='module')
-def test_app():
-    app = FastAPI()
-    app.include_router(router, prefix='/api/v1/bookmarks')
-    yield TestClient(app)
+# Test GET /api/v1/bookmarks
+def test_get_bookmarks():
+    response = requests.get(f'{BASE_URL}/api/v1/bookmarks', headers=headers)
+    assert response.status_code == 200
+    assert response.json() == {
+        'bookmarks': []
+    }   # Assuming an empty bookmarks list for a new user
 
 
-def test_get_bookmarks(test_app):
-    response = test_app.get(
-        '/api/v1/bookmarks', headers={'Authorization': 'Bearer valid_token'}
-    )
-    assert response.status_code == HTTPStatus.OK
-    assert 'bookmarks' in response.json()
+# Test POST /api/v1/bookmarks/{movie_id}
+def test_add_bookmarks():
+    response = requests.post(f'{BASE_URL}/api/v1/bookmarks/some-movie-id')
+    assert response.status_code == 200
+    assert response.json() == {
+        'bookmarks': ['some-movie-id']
+    }   # Assuming the movie id was successfully added
 
 
-def test_add_bookmarks(test_app):
-    movie_id = UUID('00000000-0000-0000-0000-000000000001')
-    response = test_app.post(
-        f'/api/v1/bookmarks/{movie_id}',
-        headers={'Authorization': 'Bearer valid_token'},
-    )
-    assert response.status_code == HTTPStatus.OK
-    assert 'bookmarks' in response.json()
+# Test DELETE /api/v1/bookmarks/{movie_id}
+def test_delete_bookmarks():
+    # Add a movie id to the user's bookmarks list first
+    requests.post(f'{BASE_URL}/api/v1/bookmarks/some-movie-id')
 
-
-def test_delete_bookmarks(test_app):
-    movie_id = UUID('00000000-0000-0000-0000-000000000001')
-    response = test_app.delete(
-        f'/api/v1/bookmarks/{movie_id}',
-        headers={'Authorization': 'Bearer valid_token'},
-    )
-    assert response.status_code == HTTPStatus.OK
-    assert 'bookmarks' in response.json()
+    response = requests.delete(f'{BASE_URL}/api/v1/bookmarks/some-movie-id')
+    assert response.status_code == 200
+    assert response.json() == {
+        'bookmarks': []
+    }   # Assuming the movie id was successfully removed

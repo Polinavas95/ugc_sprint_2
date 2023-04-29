@@ -5,7 +5,7 @@ import jwt
 from fastapi import HTTPException, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from user_api.src.app.core.config import Settings
+from app.core.config import Settings
 
 settings = Settings()
 
@@ -34,5 +34,7 @@ class Auth:
     def __call__(
         self, credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer())
     ) -> Dict[str, int]:
+        if not settings.use_auth:
+            return {'user_id': 1}
         token = credentials.credentials
         return self.decode_token(token)

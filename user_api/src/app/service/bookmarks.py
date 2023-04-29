@@ -4,8 +4,8 @@ from uuid import UUID
 from fastapi import Depends
 from motor.core import AgnosticCollection
 
-from user_api.src.app.db.mongo_db import get_mongo
-from user_api.src.app.models.user_bookmarks import UserBookmarks
+from app.db.mongo_db import get_mongo
+from app.models.user_bookmarks import UserBookmarks
 
 
 class UserBookmarksService:

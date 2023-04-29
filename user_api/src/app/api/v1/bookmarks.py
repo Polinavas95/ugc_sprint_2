@@ -4,9 +4,9 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from user_api.src.app.models.user_bookmarks import UserBookmarks
-from user_api.src.app.service.auth import Auth
-from user_api.src.app.service.bookmarks import (
+from app.models.user_bookmarks import UserBookmarks
+from app.service.auth import Auth
+from app.service.bookmarks import (
     UserBookmarksService,
     get_user_bookmarks_service,
 )

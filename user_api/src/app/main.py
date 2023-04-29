@@ -5,9 +5,9 @@ from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 
-from user_api.src.app.api.v1 import likes, review, bookmarks
-from user_api.src.app.core.config import Settings
-from user_api.src.app.db import mongo_db
+from app.api.v1 import likes, review, bookmarks
+from app.core.config import Settings
+from app.db import mongo_db
 
 settings = Settings()
 

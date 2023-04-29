@@ -4,10 +4,10 @@ from uuid import UUID
 from fastapi import Depends
 from motor.core import AgnosticCollection
 
-from user_api.src.app.db.mongo_db import get_mongo
-from user_api.src.app.models.film_likes_schema import MovieLikeSchema
+from app.db.mongo_db import get_mongo
+from app.models.film_likes_schema import MovieLikeSchema
 
-from user_api.src.app.utils.functions import get_rating
+from app.utils.functions import get_rating
 
 
 class MovieLikesService:

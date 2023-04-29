@@ -20,4 +20,4 @@ RUN pip install --upgrade pip \
 
 EXPOSE 8011
 
-COPY . ./app
+COPY .. ./app
