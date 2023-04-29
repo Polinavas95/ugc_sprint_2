@@ -5,6 +5,7 @@ BASE_URL = 'http://localhost:8011'
 token = 'my_bearer_token'
 headers = {'Authorization': f'Bearer {token}'}
 
+
 # Test GET /api/v1/bookmarks
 def test_get_bookmarks():
     response = requests.get(f'{BASE_URL}/api/v1/bookmarks', headers=headers)

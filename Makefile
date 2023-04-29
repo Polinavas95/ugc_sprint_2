@@ -22,7 +22,6 @@ run_api_ugc:
 run_clickhouse:
 	docker-compose -f ./database/clickhouse/docker-compose.yml up --build -d
 
-
 run_user_api:
 	docker-compose -f ./user_api/docker-compose.yml up --build -d
 	bash ./user_api/src/create_claster.sh
