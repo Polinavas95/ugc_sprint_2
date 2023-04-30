@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Optional, Dict, Union
+from typing import List, Optional, Any
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -8,7 +8,7 @@ from pydantic import BaseModel
 class UserReview(BaseModel):
     movie_id: UUID
     review_id: UUID
-    user_id: UUID
+    user_id: Any
     created: datetime.datetime
     text: str
     like_by: Optional[List[UUID]] = []
