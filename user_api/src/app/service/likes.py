@@ -11,12 +11,15 @@ from app.utils.functions import get_rating
 
 
 class MovieLikesService:
-
-    def __init__(self, model: Type[MovieLikeSchema], collection: AgnosticCollection):
+    def __init__(
+        self, model: Type[MovieLikeSchema], collection: AgnosticCollection
+    ):
         self.model = model
         self.collection = collection
 
-    async def _get_movie_data(self, movie_filter: Dict[str, str]) -> Optional[Dict[str, int]]:
+    async def _get_movie_data(
+        self, movie_filter: Dict[str, str]
+    ) -> Optional[Dict[str, int]]:
 
         if movie_document := await self.collection.find_one(movie_filter):
             response_data = {
@@ -29,7 +32,9 @@ class MovieLikesService:
 
         return None
 
-    async def add_like_dislike(self, user_id: str, movie_id: Union[UUID, str], like: bool) -> MovieLikeSchema:
+    async def add_like_dislike(
+        self, user_id: str, movie_id: Union[UUID, str], like: bool
+    ) -> MovieLikeSchema:
         movie_id = str(movie_id)
         movie_filter = {'movie_id': movie_id}
         if movie := await self.collection.find_one(movie_filter):
@@ -44,33 +49,37 @@ class MovieLikesService:
                 movie_response_data = await self._get_movie_data(movie_filter)
                 return self.model(**movie_response_data)  # type: ignore[arg-type]
 
-            movie_data = {
+            document = {
                 'like_by': list(like_by),
                 'dislike_by': list(dislike_by),
                 'rating': get_rating(like_by, dislike_by),
             }
-            await self.collection.update_one(
-                movie_filter,
-                {'$set': movie_data},
-            )
         else:
             like_by = [user_id] if like else []  # type: ignore[assignment]
             dislike_by = [user_id] if not like else []  # type: ignore[assignment]
             rating = get_rating(like_by, dislike_by)
-            movie_data = {
+            document = {
                 'movie_id': movie_id,
                 'like_by': list(like_by),
                 'dislike_by': list(dislike_by),
                 'rating': rating,
+                'film_id': hash(movie_id),
             }
-            await self.collection.insert_one(movie_data)
+
+        await self.collection.update_one(
+            {'film_id': hash(movie_id), **movie_filter},
+            {'$set': document},
+            upsert=True,
+        )
 
         movie_response_data = await self._get_movie_data(movie_filter)
         return self.model(**movie_response_data)  # type: ignore[arg-type]
 
     async def get(self, movie_id: UUID) -> Optional[MovieLikeSchema]:
         movie_filter = {'movie_id': str(movie_id)}
-        if movie_response_data := await self._get_movie_data(movie_filter):
+        if movie_response_data := await self._get_movie_data(
+            {'film_id': (str(movie_id)), **movie_filter}
+        ):
             return self.model(**movie_response_data)
 
         return None
@@ -90,14 +99,16 @@ class MovieLikesService:
                 like_by.remove(user_id) if like else dislike_by.remove(user_id)
             except ValueError:
                 raise
-            movie_data = {
+            document = {
                 'like_by': like_by,
                 'dislike_by': dislike_by,
                 'rating': get_rating(like_by, dislike_by),
             }
             await self.collection.update_one(
-                movie_filter, {'$set': movie_data},
-            )
+            {'film_id': hash(movie_id), **movie_filter},
+            {'$set': document},
+            upsert=True,
+        )
 
             movie_response_data = await self._get_movie_data(movie_filter)
             return self.model(**movie_response_data)  # type: ignore[arg-type]

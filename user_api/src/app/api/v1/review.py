@@ -8,7 +8,10 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 
 from app.models.user_reviews import UserReview
 from app.service.auth import Auth
-from app.service.reviews import UserReviewsService, get_user_reviews_service
+from app.service.reviews import (
+    UserReviewsService,
+    get_user_reviews_service,
+)
 
 router = APIRouter()
 auth_handler = Auth()
@@ -102,7 +105,9 @@ async def add_like(
             status_code=HTTPStatus.NOT_FOUND,
             detail='movie not found',
         )
-    return Response(content=json.dumps(response), media_type="application/json")
+    return Response(
+        content=json.dumps(response), media_type="application/json"
+    )
 
 
 @router.post(
@@ -127,11 +132,13 @@ async def add_dislike(
     reviews = await reviews_service.add_dislike(user_id, review_id)
     response = {}
     for k, v in reviews.items():
-        if k == "dislike_by": # type: ignore[comparison-overlap]
+        if k == "dislike_by":   # type: ignore[comparison-overlap]
             response = {k: v}
     if not reviews:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail='movie not found',
         )
-    return Response(content=json.dumps(response), media_type="application/json")
+    return Response(
+        content=json.dumps(response), media_type="application/json"
+    )

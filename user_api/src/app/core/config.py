@@ -9,12 +9,14 @@ class Settings(BaseSettings):
     sentry_dsn: str = Field('123', env='SENTRY_DSN')
     sentry_switch: str = Field('OFF', env='SENTRY_SWITCH')
 
-    apm_server_host: str = Field('http://localhost', env='APM_SERVER_HOST')
+    apm_server_host: str = Field('localhost', env='APM_SERVER_HOST')
     apm_server_port: str = Field('8200', env='APM_SERVER_PORT')
 
     mongo_db_name: str = Field('ugc_db', env='MONGO_DB')
     mongo_host: str = Field('mongos1', env='MONGO_HOST')
     mongo_port: str = Field('27017', env='MONGO_PORT')
 
+    use_auth: bool = Field(True, env='USE_AUTH')
+
     class Config:
-        env_file = '.env'
+        env_file = '.env_user_api'

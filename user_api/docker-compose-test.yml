@@ -1,5 +1,4 @@
 services:
-
   user_api:
     container_name: user_api
     build:
@@ -10,6 +9,8 @@ services:
       - 8011:8011
     env_file:
       - ./src/app/.env_user_api
+    environment:
+      - USE_AUTH=False
 
   nginx_user_api:
    build: ./src/nginx
