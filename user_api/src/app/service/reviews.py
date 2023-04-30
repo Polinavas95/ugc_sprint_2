@@ -93,10 +93,7 @@ class UserReviewsService:
         """
         review_filter = {'review_id': str(review_id)}
         # selects the documents where the value of a field equals any value in the specified array
-        dislike = await self.collection.find_one(
-            review_filter,
-            {'dislike_by': {'$in': [user_id]}}
-        )
+        dislike = await self.collection.find_one({'dislike_by': {'$in': [user_id]}}, {'dislike_by': user_id})
         if dislike is not None and dislike['dislike_by'] == user_id:
             await self.collection.update_one(
                 {'film_id': hash(str(review_id)), **review_filter},
@@ -108,10 +105,7 @@ class UserReviewsService:
             {'$addToSet': {'like_by': user_id}},
             upsert=True,
         )
-        like = await self.collection.find_one(
-            review_filter,
-            {'like_by': {'$in': [user_id]}}, {'like_by': user_id}
-        )
+        like = await self.collection.find_one({'like_by': {'$in': [user_id]}}, {'like_by': user_id})
         return like
 
     async def add_dislike(
@@ -125,10 +119,7 @@ class UserReviewsService:
         :return: User ID
         """
         review_filter = {'review_id': str(review_id)}
-        like = await self.collection.find_one(
-            review_filter,
-            {'like_by': {'$in': [user_id]}}
-        )
+        like = await self.collection.find_one({'like_by': {'$in': [user_id]}}, {'like_by': user_id})
         if like is not None and like['like_by'] == user_id:
             await self.collection.update_one(
                 {'film_id': hash(str(review_id)), **review_filter},
@@ -140,10 +131,7 @@ class UserReviewsService:
             {'$addToSet': {'dislike_by': user_id}},
             upsert=True,
         )
-        dislike = await self.collection.find_one(
-            review_filter,
-            {'dislike_by': {'$in': [user_id]}}
-        )
+        dislike = await self.collection.find_one({'dislike_by': {'$in': [user_id]}}, {'dislike_by': user_id})
         return dislike
 
 

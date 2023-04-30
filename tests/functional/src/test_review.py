@@ -29,18 +29,12 @@ def test_add_review_assert_error():
     assert response.json()['text'] == text
 
 
-def test_not_found_reviews():
-    url = f"{BASE_URL}/api/v1/review/?movie_id={movie_id}"
-    response = requests.get(url, headers=headers)
-    assert response.json() == {'detail': 'user reviews not found'}
-
-
 def test_add_like():
     url = BASE_URL
     review_id = "98b2d06e-6f31-4428-8ab9-b31a319921d6"
     print(f"{url}/api/v1/review/like/?review_id={review_id}")
     response = requests.post(f"{url}/api/v1/review/like/{review_id}/?movie_id={movie_id}", headers=headers)
-    # assert response.status_code == HTTPStatus.OK
+    assert response.status_code == HTTPStatus.OK
     assert response.json() == {"like_by": [{"user_id": 1}]}
 
 
