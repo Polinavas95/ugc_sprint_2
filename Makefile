@@ -39,6 +39,3 @@ test:
 	make run_elk
 	make run_user_api_test
 	pytest tests -k test_get_bookmarks
-
-test_2:
-	pytest tests -k test_get_bookmarks

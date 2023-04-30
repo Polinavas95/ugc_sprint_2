@@ -23,7 +23,6 @@ class UserBookmarksService:
         }
         user_filter = {'user_id': user_id}
         # Insert a single document
-        #
         await self.collection.insert_one(document)
         # Get a single document from the database
         new_document = await self.collection.find_one(user_filter)
